@@ -1,0 +1,863 @@
+<!DOCTYPE html>
+<html lang="id" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RestoKu - Landing Page</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#4b5563', // Gray-600
+                        primaryDark: '#374151', // Gray-700
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #d1d5db; border-radius: 10px; }
+        .dark ::-webkit-scrollbar-thumb { background: #4b5563; }
+        ::-webkit-scrollbar-thumb:hover { background: #9ca3af; }
+        
+        /* Modal Transitions */
+        .modal {
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
+        .modal.active {
+            opacity: 1;
+            pointer-events: auto;
+        }
+        .modal-content {
+            transform: translateY(-20px) scale(0.95);
+            transition: transform 0.3s ease;
+        }
+        .modal.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+
+        /* Sidebar Transition for Mobile */
+        #cartSidebar {
+            transition: transform 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gradient-to-br from-gray-50 to-gray-200 text-gray-800 dark:from-gray-900 dark:to-gray-800 dark:text-gray-200 transition-colors duration-300 font-sans antialiased h-screen overflow-hidden flex flex-col">
+
+    <!-- Header -->
+    <header class="h-16 w-full bg-white/80 backdrop-blur-md dark:bg-gray-900/80 shadow-sm z-40 transition-colors duration-300 border-b border-gray-200/50 dark:border-gray-800 flex-shrink-0">
+        <div class="w-full mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-between">
+            <div class="flex items-center gap-2 text-primary dark:text-gray-100 font-bold text-xl tracking-tight cursor-pointer">
+                <!-- Icon Plate / Custom Logo -->
+                <svg id="defaultLogo" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 21a9 9 0 0 0 9-9H3a9 9 0 0 0 9 9Z"/><path d="M3 12a9 9 0 0 1 18 0"/><path d="M12 3v9"/></svg>
+                <img id="customLogo" src="" alt="Logo Resto" class="hidden w-7 h-7 object-cover rounded-full border border-gray-200 dark:border-gray-700 shadow-sm">
+                <span data-i18n="restoName">RestoKu</span>
+            </div>
+            
+            <div class="flex items-center gap-3">
+                <!-- Settings Button -->
+                <button onclick="openModal('settingsModal')" class="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition" aria-label="Settings">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                </button>
+                <!-- Mobile Cart Toggle Button -->
+                <button onclick="toggleCart()" class="lg:hidden relative p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-gray-600 dark:text-gray-300"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span id="cartBadgeMobile" class="absolute top-0 right-0 transform translate-x-1/4 -translate-y-1/4 bg-primary text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full hidden">0</span>
+                </button>
+            </div>
+        </div>
+    </header>
+
+    <!-- Content Wrapper (Grid Layout) -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Left Area: Menu Grid -->
+        <main class="flex-1 overflow-y-auto p-4 sm:p-6 lg:p-8">
+            <div class="mb-6 text-center sm:text-left">
+                <h1 class="text-2xl sm:text-3xl font-bold text-gray-900 dark:text-white" data-i18n="heroTitle">Menu Favorit Kami</h1>
+                <p class="text-gray-500 dark:text-gray-400 mt-1 text-sm sm:text-base" data-i18n="heroSub">Pilih hidangan terbaik untuk hari ini.</p>
+            </div>
+
+            <div id="categoryFilters" class="mb-5"></div>
+
+            <!-- Menu Grid -->
+            <div id="menuGrid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-5">
+                <!-- Cards injected by JS -->
+            </div>
+            <div class="pb-10"></div> <!-- padding bottom for scroll -->
+        </main>
+
+        <!-- Right Area: Fixed Cart Sidebar -->
+        <aside id="cartSidebar" class="fixed inset-y-0 right-0 z-40 w-full sm:w-80 lg:w-96 bg-white dark:bg-gray-900 border-l border-gray-200 dark:border-gray-800 shadow-2xl lg:shadow-none transform translate-x-full lg:translate-x-0 lg:relative flex flex-col h-full pt-16 lg:pt-0">
+            <!-- Mobile Close Button -->
+            <button onclick="toggleCart()" class="lg:hidden absolute top-4 right-4 p-2 text-gray-500 hover:text-gray-800 dark:text-gray-400 dark:hover:text-white">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+
+            <div class="p-5 border-b border-gray-100 dark:border-gray-800">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                    <span data-i18n="cartTitle">Keranjang</span>
+                </h2>
+            </div>
+            
+            <!-- Cart Items -->
+            <div class="flex-1 overflow-y-auto p-4 bg-gray-50/50 dark:bg-gray-900/50">
+                <div id="cartItemsList" class="space-y-3">
+                    <!-- Injected by JS -->
+                </div>
+            </div>
+
+            <!-- Cart Footer (Checkout area) -->
+            <div class="p-5 border-t border-gray-100 dark:border-gray-800 bg-white dark:bg-gray-900 shrink-0 shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] dark:shadow-none">
+                <!-- Receipt Details -->
+                <div class="space-y-2 mb-4 text-sm">
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span data-i18n="subtotalLabel">Subtotal</span>
+                        <span id="cartSubtotal">Rp 0</span>
+                    </div>
+                    <div class="flex justify-between text-gray-500 dark:text-gray-400">
+                        <span data-i18n="taxLabel">Pajak (10%)</span>
+                        <span id="cartTax">Rp 0</span>
+                    </div>
+                    <hr class="border-dashed border-gray-200 dark:border-gray-700 my-2">
+                    <div class="flex justify-between items-center text-lg font-bold text-gray-900 dark:text-white">
+                        <span data-i18n="totalLabel">Total</span>
+                        <span id="cartTotalPrice">Rp 0</span>
+                    </div>
+                </div>
+
+                <!-- Payment Dropdown -->
+                <div class="mb-4">
+                    <label class="block text-xs font-medium text-gray-500 dark:text-gray-400 mb-1" data-i18n="paymentLabel">Metode Pembayaran</label>
+                    <select id="paymentMethod" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary block p-2.5 dark:bg-gray-800 dark:border-gray-700 dark:text-white transition outline-none">
+                        <option value="cash" data-i18n="payCash">Tunai (Cash)</option>
+                        <option value="qris">QRIS</option>
+                        <option value="transfer" data-i18n="payTransfer">Transfer Bank</option>
+                    </select>
+                </div>
+
+                <button onclick="checkout()" id="checkoutBtn" disabled class="w-full text-white bg-primary hover:bg-primaryDark focus:ring-4 focus:outline-none focus:ring-primary/50 font-bold rounded-xl text-base px-5 py-3.5 text-center transition shadow-md disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+                    <span data-i18n="btnCheckout">Beli Sekarang</span>
+                </button>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- ===================== MODALS ===================== -->
+
+    <!-- Detail Menu Modal -->
+    <div id="detailModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden relative border border-gray-100 dark:border-gray-700">
+            <button onclick="closeModal('detailModal')" class="absolute top-3 right-3 z-10 bg-black/40 hover:bg-black/60 text-white p-2 rounded-full backdrop-blur-md transition">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+            </button>
+            
+            <img id="detailImg" src="" alt="Food" class="w-full h-56 object-cover bg-gray-200 dark:bg-gray-700">
+            
+            <div class="p-6">
+                <div class="flex justify-between items-start mb-2">
+                    <h2 id="detailTitle" class="text-xl font-bold text-gray-900 dark:text-white leading-tight"></h2>
+                </div>
+                <!-- SVG Stars Rating -->
+                <div class="flex items-center gap-1 mb-3 bg-gray-50 dark:bg-gray-700/50 w-max px-2 py-1 rounded-md border border-gray-100 dark:border-gray-600">
+                    <svg class="w-4 h-4 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                    <span id="detailRating" class="text-sm font-semibold text-gray-700 dark:text-gray-300"></span>
+                </div>
+                
+                <p id="detailDesc" class="text-gray-500 dark:text-gray-400 text-sm mb-4 leading-relaxed"></p>
+                <div class="text-2xl font-bold text-gray-900 dark:text-white mb-6" id="detailPrice"></div>
+                
+                <div class="flex items-center justify-between gap-3 mt-auto">
+                    <!-- Quantity Selector -->
+                    <div class="flex items-center border border-gray-200 dark:border-gray-600 rounded-xl overflow-hidden h-12 bg-gray-50 dark:bg-gray-900">
+                        <button onclick="updateQty(-1)" class="w-10 h-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition font-bold text-lg">-</button>
+                        <div id="detailQty" class="w-10 text-center font-bold text-gray-900 dark:text-white">1</div>
+                        <button onclick="updateQty(1)" class="w-10 h-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition font-bold text-lg">+</button>
+                    </div>
+                    
+                    <button onclick="addToCart()" class="flex-1 bg-primary hover:bg-primaryDark text-white h-12 rounded-xl font-medium transition-all transform active:scale-95 shadow-sm flex items-center justify-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <span data-i18n="addCart">Tambah</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="successModal" class="modal fixed inset-0 z-[60] flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-sm p-8 text-center border border-gray-100 dark:border-gray-700">
+            <div class="w-16 h-16 bg-green-50 dark:bg-green-900/30 text-green-500 rounded-full flex items-center justify-center mx-auto mb-4">
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>
+            </div>
+            <h3 class="text-xl font-bold text-gray-900 dark:text-white mb-2" data-i18n="successTitle">Berhasil!</h3>
+            <p class="text-gray-500 dark:text-gray-400 mb-6" data-i18n="successMsg">Pesananmu akan segera dibuat.</p>
+            <button onclick="closeModal('successModal')" class="w-full text-gray-900 bg-gray-100 hover:bg-gray-200 dark:bg-gray-700 dark:text-white dark:hover:bg-gray-600 font-medium rounded-xl py-3 transition" data-i18n="btnClose">Tutup</button>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settingsModal" class="modal fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm p-4">
+        <div class="modal-content bg-white dark:bg-gray-800 rounded-2xl shadow-2xl w-full max-w-lg max-h-[90vh] overflow-hidden flex flex-col relative border border-gray-100 dark:border-gray-700">
+            <div class="p-5 border-b border-gray-100 dark:border-gray-700 flex justify-between items-center bg-white dark:bg-gray-800 rounded-t-2xl shrink-0">
+                <h2 class="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                    <span data-i18n="settingsTitle">Pengaturan</span>
+                </h2>
+                <button onclick="closeModal('settingsModal')" class="text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition p-1">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                </button>
+            </div>
+            
+            <div class="p-6 space-y-6 overflow-y-auto flex-1">
+                <!-- Theme & Lang -->
+                <div class="flex gap-4">
+                    <div class="flex-1 bg-gray-50 dark:bg-gray-700/30 p-3 rounded-xl border border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                        <span class="text-sm font-medium text-gray-700 dark:text-gray-300" data-i18n="darkMode">Tema Gelap</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" id="themeToggle" class="sr-only peer">
+                            <div class="w-11 h-6 bg-gray-300 peer-focus:outline-none rounded-full peer dark:bg-gray-600 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-primary"></div>
+                        </label>
+                    </div>
+                    <div class="flex-1 bg-gray-50 dark:bg-gray-700/30 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+                    <select id="langSelect" class="w-full bg-transparent text-gray-700 text-sm focus:ring-0 focus:outline-none dark:text-gray-300 font-medium cursor-pointer">
+                        <option value="id" class="dark:bg-gray-800">🇮🇩 Bahasa Indonesia</option>
+                        <option value="en" class="dark:bg-gray-800">🇬🇧 English</option>
+                    </select>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 dark:border-gray-700">
+
+            <!-- Profil Resto (Ubah Nama & Logo) -->
+            <div>
+                <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3" data-i18n="changeProfileTitle">Profil Resto</h3>
+                <div class="space-y-3">
+                    <div class="flex gap-2">
+                        <input type="text" id="restoNameInput" class="flex-1 bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none transition" placeholder="Nama Baru">
+                        <button onclick="updateRestoName(event)" class="text-white bg-primary hover:bg-primaryDark font-medium rounded-lg text-sm px-4 py-2 transition" data-i18n="btnSaveName">Simpan</button>
+                    </div>
+                    <div>
+                        <label class="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300" data-i18n="changeLogoLabel">Ubah Logo (Lokal PNG/JPG)</label>
+                        <input type="file" id="restoLogoInput" accept="image/png, image/jpeg, image/jpg" class="block w-full text-sm text-gray-900 border border-gray-200 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 p-2">
+                    </div>
+                </div>
+            </div>
+
+            <hr class="border-gray-200 dark:border-gray-700">
+
+            <!-- Manage Menu Form -->
+            <div>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3" id="formTitle" data-i18n="addMenuTitle">Tambah Menu Baru</h3>
+                    <form id="menuForm" class="space-y-3">
+                        <input type="hidden" id="menuId">
+                        <div>
+                            <input type="text" id="menuName" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white dark:focus:ring-primary outline-none transition" placeholder="Nama Makanan/Minuman">
+                        </div>
+                        <div class="space-y-2">
+                            <select id="menuCategory" required class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none transition" aria-label="Kategori menu">
+                                <option value="makanan">Makanan</option>
+                                <option value="minuman">Minuman</option>
+                            </select>
+                            <select id="menuSubcategory" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none transition" aria-label="Subkategori makanan"></select>
+                        </div>
+                        <div>
+                            <textarea id="menuDesc" required rows="2" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none transition" placeholder="Deskripsi Singkat"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                        <input type="number" id="menuPrice" required min="0" class="w-full bg-gray-50 border border-gray-200 text-gray-900 text-sm rounded-lg focus:ring-primary focus:border-primary p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:text-white outline-none transition" placeholder="Harga (Rp)">
+                        
+                        <!-- Star Rating Selection -->
+                        <div class="flex items-center gap-1 bg-gray-50 border border-gray-200 p-2.5 rounded-lg dark:bg-gray-700 dark:border-gray-600 justify-center">
+                            <span id="star1" onclick="setFormRating(1)" class="cursor-pointer text-yellow-500 hover:scale-110 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></span>
+                            <span id="star2" onclick="setFormRating(2)" class="cursor-pointer text-yellow-500 hover:scale-110 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></span>
+                            <span id="star3" onclick="setFormRating(3)" class="cursor-pointer text-yellow-500 hover:scale-110 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></span>
+                            <span id="star4" onclick="setFormRating(4)" class="cursor-pointer text-yellow-500 hover:scale-110 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></span>
+                            <span id="star5" onclick="setFormRating(5)" class="cursor-pointer text-yellow-500 hover:scale-110 transition"><svg class="w-6 h-6" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg></span>
+                        </div>
+                    </div>
+                    
+                    <!-- File Input for Image -->
+                        <div>
+                            <label class="block mb-1 text-xs font-medium text-gray-700 dark:text-gray-300" data-i18n="uploadImageLabel">Upload Foto (Lokal)</label>
+                            <input type="file" id="menuImgFile" accept="image/*" class="block w-full text-sm text-gray-900 border border-gray-200 rounded-lg cursor-pointer bg-gray-50 dark:text-gray-400 focus:outline-none dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 p-2">
+                            <div class="mt-2 hidden" id="previewContainer">
+                                <img id="imgPreview" src="" alt="Preview" class="h-16 w-16 object-cover rounded-lg border border-gray-200 dark:border-gray-600">
+                            </div>
+                        </div>
+
+                        <div class="flex gap-2 pt-2">
+                            <button type="button" id="btnCancelEdit" onclick="cancelEdit()" class="hidden flex-1 text-gray-700 bg-gray-200 hover:bg-gray-300 dark:text-gray-200 dark:bg-gray-700 dark:hover:bg-gray-600 font-medium rounded-lg text-sm px-4 py-2.5 transition" data-i18n="btnCancel">Batal</button>
+                            <button type="submit" id="btnSubmitMenu" class="flex-1 text-white bg-primary hover:bg-primaryDark focus:ring-4 focus:ring-primary/30 font-medium rounded-lg text-sm px-4 py-2.5 transition shadow-sm" data-i18n="btnSubmit">Simpan Menu</button>
+                        </div>
+                    </form>
+                </div>
+
+                <hr class="border-gray-200 dark:border-gray-700">
+
+                <!-- Manage Menu List -->
+                <div>
+                    <h3 class="text-base font-bold text-gray-900 dark:text-white mb-3" data-i18n="deleteMenuTitle">Daftar Menu</h3>
+                    <div id="manageMenuList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <!-- Injected by JS -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Application Logic -->
+    <script>
+        // --- Data State ---
+        let menus = [
+            { id: 1, name: "Nasi Goreng Spesial", desc: "Nasi goreng dengan bumbu rempah rahasia, disajikan dengan telur.", price: 35000, rating: 4.8, category: "makanan", subcategory: "tidak-berkuah", img: "https://images.unsplash.com/photo-1604908176997-125f25cc6f3d?auto=format&fit=crop&w=600&q=80" },
+            { id: 2, name: "Sate Ayam Madura", desc: "10 tusuk sate ayam empuk dengan bumbu kacang kental khas Madura.", price: 28000, rating: 4.9, category: "makanan", subcategory: "sate-satean", img: "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=600&q=80" },
+            { id: 3, name: "Es Teh Manis", desc: "Teh melati pilihan yang diseduh sempurna dengan es batu.", price: 10000, rating: 4.5, category: "minuman", subcategory: "", img: "https://images.unsplash.com/photo-1556679343-c7306c1976bc?auto=format&fit=crop&w=600&q=80" },
+            { id: 4, name: "Ayam Bakar Madu", desc: "Potongan ayam segar dibakar dengan olesan madu murni.", price: 45000, rating: 4.7, category: "makanan", subcategory: "tidak-berkuah", img: "https://images.unsplash.com/photo-1598514982205-f36b96d1e8d4?auto=format&fit=crop&w=600&q=80" }
+        ];
+
+        let cart = []; // Array of { menu: object, quantity: number }
+        let currentDetailMenu = null;
+        let currentDetailQty = 1;
+        let currentLang = 'id';
+        let selectedCategory = 'makanan';
+        let selectedFoodSubcategory = 'semua';
+        let tempBase64Image = null; // Store locally uploaded image string
+        let currentFormRating = 5; // Default rating for new menu
+
+        const foodSubcategories = [
+            { value: "berkuah", id: "Makanan Berkuah", en: "Soupy Food" },
+            { value: "tidak-berkuah", id: "Tidak Berkuah", en: "Non-soupy Food" },
+            { value: "sate-satean", id: "Sate-satean", en: "Satay" },
+            { value: "lain-lain", id: "Lain-lain", en: "Other Food" }
+        ];
+
+        // --- Translations ---
+        const i18n = {
+            id: {
+                restoName: "RestoKu", heroTitle: "Menu Favorit Kami", heroSub: "Pilih hidangan terbaik untuk hari ini.",
+                addCart: "Tambah ke Keranjang", settingsTitle: "Pengaturan", darkMode: "Tema Gelap",
+                changeProfileTitle: "Profil Resto", changeLogoLabel: "Ubah Logo (Lokal PNG/JPG)", btnSaveName: "Simpan",
+                addMenuTitle: "Tambah Menu Baru", editMenuTitle: "Edit Menu", btnSubmit: "Simpan Menu", btnUpdate: "Update Menu", btnCancel: "Batal",
+                deleteMenuTitle: "Daftar Menu", uploadImageLabel: "Upload Foto (Lokal)",
+                cartTitle: "Keranjang", subtotalLabel: "Subtotal", taxLabel: "Pajak (10%)", totalLabel: "Total Pembayaran", 
+                paymentLabel: "Metode Pembayaran", payCash: "Tunai (Cash)", payTransfer: "Transfer Bank", btnCheckout: "Beli Sekarang",
+                successTitle: "Berhasil!", successMsg: "Pesananmu akan segera dibuat.", btnClose: "Tutup", emptyCart: "Keranjang masih kosong."
+            },
+            en: {
+                restoName: "MyResto", heroTitle: "Our Favorite Menus", heroSub: "Choose the best dishes for today.",
+                addCart: "Add to Cart", settingsTitle: "Settings", darkMode: "Dark Mode",
+                changeProfileTitle: "Resto Profile", changeLogoLabel: "Change Logo (Local PNG/JPG)", btnSaveName: "Save",
+                addMenuTitle: "Add New Menu", editMenuTitle: "Edit Menu", btnSubmit: "Save Menu", btnUpdate: "Update Menu", btnCancel: "Cancel",
+                deleteMenuTitle: "Menu List", uploadImageLabel: "Upload Photo (Local)",
+                cartTitle: "Your Cart", subtotalLabel: "Subtotal", taxLabel: "Tax (10%)", totalLabel: "Total Payment", 
+                paymentLabel: "Payment Method", payCash: "Cash", payTransfer: "Bank Transfer", btnCheckout: "Checkout Now",
+                successTitle: "Success!", successMsg: "Your order will be prepared shortly.", btnClose: "Close", emptyCart: "Your cart is empty."
+            }
+        };
+
+        // --- Utility ---
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(amount);
+        }
+
+        function getSubcategoryLabel(value) {
+            if (value === 'semua') return currentLang === 'id' ? 'Semua' : 'All';
+            const subcategory = foodSubcategories.find(item => item.value === value);
+            return subcategory ? subcategory[currentLang] : '';
+        }
+
+        function renderCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            const mainCategories = [
+                { value: 'makanan', label: currentLang === 'id' ? 'Makanan' : 'Food' },
+                { value: 'minuman', label: currentLang === 'id' ? 'Minuman' : 'Drinks' }
+            ];
+            const buttonClass = (active) => `px-4 py-2 rounded-full text-sm font-semibold transition ${active ? 'bg-primary text-white shadow-sm' : 'bg-white text-gray-600 hover:bg-gray-100 dark:bg-gray-800 dark:text-gray-300 dark:hover:bg-gray-700'}`;
+
+            container.innerHTML = `
+                <div class="flex flex-wrap gap-2 mb-3">
+                    ${mainCategories.map(category => `
+                        <button type="button" onclick="selectCategory('${category.value}')" class="${buttonClass(selectedCategory === category.value)}">${category.label}</button>
+                    `).join('')}
+                </div>
+                ${selectedCategory === 'makanan' ? `
+                    <div class="flex flex-wrap gap-2">
+                        <button type="button" onclick="selectFoodSubcategory('semua')" class="${buttonClass(selectedFoodSubcategory === 'semua')}">${getSubcategoryLabel('semua')}</button>
+                        ${foodSubcategories.map(subcategory => `
+                            <button type="button" onclick="selectFoodSubcategory('${subcategory.value}')" class="${buttonClass(selectedFoodSubcategory === subcategory.value)}">${getSubcategoryLabel(subcategory.value)}</button>
+                        `).join('')}
+                    </div>
+                ` : ''}
+            `;
+        }
+
+        function selectCategory(category) {
+            selectedCategory = category;
+            renderMenus();
+        }
+
+        function selectFoodSubcategory(subcategory) {
+            selectedFoodSubcategory = subcategory;
+            renderMenus();
+        }
+
+        function updateFormSubcategories(selectedValue) {
+            const select = document.getElementById('menuSubcategory');
+            const categorySelect = document.getElementById('menuCategory');
+            const categoryValue = categorySelect.value || 'makanan';
+            categorySelect.innerHTML = `
+                <option value="makanan">${currentLang === 'id' ? 'Makanan' : 'Food'}</option>
+                <option value="minuman">${currentLang === 'id' ? 'Minuman' : 'Drinks'}</option>
+            `;
+            categorySelect.value = categoryValue;
+            const isFood = categoryValue === 'makanan';
+            select.innerHTML = foodSubcategories.map(subcategory => `
+                <option value="${subcategory.value}">${getSubcategoryLabel(subcategory.value)}</option>
+            `).join('');
+            select.disabled = !isFood;
+            select.classList.toggle('opacity-50', !isFood);
+            if (isFood) {
+                select.value = foodSubcategories.some(item => item.value === selectedValue) ? selectedValue : 'lain-lain';
+            } else {
+                select.value = '';
+            }
+        }
+
+        // --- UI Rendering ---
+        function renderMenus() {
+            const container = document.getElementById('menuGrid');
+            renderCategoryFilters();
+            const visibleMenus = menus.filter(menu =>
+                (menu.category || 'makanan') === selectedCategory &&
+                (selectedCategory !== 'makanan' || selectedFoodSubcategory === 'semua' || (menu.subcategory || 'lain-lain') === selectedFoodSubcategory)
+            );
+            if (visibleMenus.length === 0) {
+                container.innerHTML = `<p class="col-span-full text-center text-gray-500 dark:text-gray-400 py-10">${currentLang === 'id' ? 'Belum ada menu dalam kategori ini.' : 'No menus in this category yet.'}</p>`;
+                renderManageList();
+                return;
+            }
+            container.innerHTML = visibleMenus.map(m => {
+                const imgSrc = m.img || `https://placehold.co/600x400/e2e8f0/475569?text=${encodeURIComponent(m.name)}`;
+                return `
+                    <div class="bg-white dark:bg-gray-800 rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden cursor-pointer flex flex-col group border border-gray-100 dark:border-gray-700" onclick='openDetailModal(${m.id})'>
+                        <div class="relative overflow-hidden h-44 w-full bg-gray-100 dark:bg-gray-900">
+                            <img src="${imgSrc}" alt="${m.name}" class="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-500 ease-out" loading="lazy">
+                            <div class="absolute top-2 right-2 bg-white/90 dark:bg-gray-900/90 backdrop-blur text-gray-800 dark:text-gray-100 px-2 py-1 rounded-md text-xs font-bold flex items-center shadow-sm border border-gray-200/50 dark:border-gray-700">
+                                <svg class="w-3.5 h-3.5 mr-1 text-yellow-500" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"></path></svg>
+                                ${m.rating}
+                            </div>
+                        </div>
+                        <div class="p-4 flex flex-col flex-grow">
+                            <h3 class="text-base font-bold text-gray-900 dark:text-white mb-1 truncate">${m.name}</h3>
+                            <p class="text-gray-500 dark:text-gray-400 text-xs mb-3 line-clamp-2">${m.desc}</p>
+                            <div class="mt-auto pt-3 border-t border-gray-100 dark:border-gray-700 flex justify-between items-center">
+                                <span class="font-bold text-primary dark:text-gray-200 text-base">${formatCurrency(m.price)}</span>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            renderManageList();
+        }
+
+        // Sidebar Cart Logic
+        function renderCart() {
+            const list = document.getElementById('cartItemsList');
+            const btn = document.getElementById('checkoutBtn');
+            let subtotal = 0;
+            
+            if (cart.length === 0) {
+                list.innerHTML = `
+                    <div class="flex flex-col items-center justify-center h-40 text-gray-400 dark:text-gray-500">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="mb-2 opacity-50"><path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/><path d="M3 6h18"/><path d="M16 10a4 4 0 0 1-8 0"/></svg>
+                        <p class="text-sm">${i18n[currentLang].emptyCart}</p>
+                    </div>`;
+                btn.disabled = true;
+            } else {
+                list.innerHTML = cart.map((item, index) => {
+                    const itemTotal = item.menu.price * item.quantity;
+                    subtotal += itemTotal;
+                    const imgSrc = item.menu.img || `https://placehold.co/100x100/e2e8f0/475569?text=Img`;
+                    return `
+                        <div class="flex gap-3 items-center bg-white dark:bg-gray-800 p-2.5 rounded-xl border border-gray-100 dark:border-gray-700 shadow-sm relative group">
+                            <img src="${imgSrc}" class="w-16 h-16 object-cover rounded-lg bg-gray-100 dark:bg-gray-900">
+                            <div class="flex-1 min-w-0">
+                                <div class="font-semibold text-gray-900 dark:text-white text-sm truncate">${item.menu.name}</div>
+                                <div class="text-xs text-gray-500 dark:text-gray-400 mt-0.5">${formatCurrency(item.menu.price)}</div>
+                                <div class="font-bold text-gray-800 dark:text-gray-200 text-sm mt-0.5">${formatCurrency(itemTotal)}</div>
+                            </div>
+                            
+                            <!-- Quantity Editor di Keranjang -->
+                            <div class="flex items-center border border-gray-200 dark:border-gray-600 rounded-lg overflow-hidden h-8 bg-gray-50 dark:bg-gray-900 shrink-0">
+                                <button onclick="updateCartQty(${index}, -1)" class="w-7 h-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition font-bold text-lg flex items-center justify-center">-</button>
+                                <div class="w-7 text-center font-bold text-gray-900 dark:text-white text-sm flex items-center justify-center">${item.quantity}</div>
+                                <button onclick="updateCartQty(${index}, 1)" class="w-7 h-full hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 transition font-bold text-lg flex items-center justify-center">+</button>
+                            </div>
+
+                            <!-- Tombol Hapus -->
+                            <button onclick="removeFromCart(${index})" class="absolute -top-2 -right-2 p-1 bg-red-100 text-red-500 rounded-full opacity-0 group-hover:opacity-100 transition-opacity dark:bg-red-900/50 shadow-sm">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+                            </button>
+                        </div>
+                    `;
+                }).join('');
+                btn.disabled = false;
+            }
+            
+            const tax = subtotal * 0.10;
+            const total = subtotal + tax;
+
+            document.getElementById('cartSubtotal').innerText = formatCurrency(subtotal);
+            document.getElementById('cartTax').innerText = formatCurrency(tax);
+            document.getElementById('cartTotalPrice').innerText = formatCurrency(total);
+
+            // Update mobile badge
+            const badgeMobile = document.getElementById('cartBadgeMobile');
+            const totalItems = cart.reduce((sum, item) => sum + item.quantity, 0);
+            if (totalItems > 0) {
+                badgeMobile.innerText = totalItems;
+                badgeMobile.classList.remove('hidden');
+            } else {
+                badgeMobile.classList.add('hidden');
+            }
+        }
+
+        // Mobile Cart Toggle
+        function toggleCart() {
+            const sidebar = document.getElementById('cartSidebar');
+            sidebar.classList.toggle('translate-x-full');
+        }
+
+        // --- Detail Modal ---
+        function openDetailModal(id) {
+            currentDetailMenu = menus.find(m => m.id === id);
+            currentDetailQty = 1;
+            
+            document.getElementById('detailImg').src = currentDetailMenu.img || `https://placehold.co/600x400/e2e8f0/475569?text=${encodeURIComponent(currentDetailMenu.name)}`;
+            document.getElementById('detailTitle').innerText = currentDetailMenu.name;
+            document.getElementById('detailDesc').innerText = currentDetailMenu.desc;
+            document.getElementById('detailRating').innerText = currentDetailMenu.rating;
+            document.getElementById('detailPrice').innerText = formatCurrency(currentDetailMenu.price);
+            document.getElementById('detailQty').innerText = currentDetailQty;
+            
+            openModal('detailModal');
+        }
+
+        function updateQty(delta) {
+            currentDetailQty += delta;
+            if (currentDetailQty < 1) currentDetailQty = 1;
+            document.getElementById('detailQty').innerText = currentDetailQty;
+        }
+
+        function addToCart() {
+            if (!currentDetailMenu) return;
+            const existingItem = cart.find(item => item.menu.id === currentDetailMenu.id);
+            if (existingItem) {
+                existingItem.quantity += currentDetailQty;
+            } else {
+                cart.push({ menu: currentDetailMenu, quantity: currentDetailQty });
+            }
+            renderCart();
+            closeModal('detailModal');
+            
+            // Auto open sidebar on desktop if added
+            if (window.innerWidth >= 1024) {
+                document.getElementById('cartSidebar').classList.remove('translate-x-full');
+            }
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            renderCart();
+        }
+
+        function updateCartQty(index, delta) {
+            cart[index].quantity += delta;
+            if (cart[index].quantity <= 0) {
+                cart.splice(index, 1); // Hapus jika mencapai angka 0
+            }
+            renderCart();
+        }
+
+        function checkout() {
+            if(cart.length === 0) return;
+            cart = []; 
+            renderCart();
+            if (window.innerWidth < 1024) {
+                 document.getElementById('cartSidebar').classList.add('translate-x-full'); // close on mobile
+            }
+            setTimeout(() => { openModal('successModal'); }, 200);
+        }
+
+        // --- Settings & Manage Menu ---
+        function renderManageList() {
+            const list = document.getElementById('manageMenuList');
+            if (menus.length === 0) {
+                list.innerHTML = `<p class="text-sm text-gray-500 dark:text-gray-400 text-center py-2" data-i18n="emptyCart">Kosong.</p>`;
+                return;
+            }
+            list.innerHTML = menus.map(m => `
+                <div class="flex justify-between items-center bg-gray-50 dark:bg-gray-700/50 p-2.5 rounded-lg border border-gray-200 dark:border-gray-600">
+                    <span class="text-sm font-medium text-gray-800 dark:text-gray-200 truncate pr-2">${m.name}</span>
+                    <div class="flex gap-1 shrink-0">
+                        <button onclick="editMenu(${m.id})" class="text-blue-500 hover:bg-blue-50 dark:hover:bg-blue-900/20 p-1.5 rounded-md transition" title="Edit">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 3a2.85 2.83 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5Z"/><path d="m15 5 4 4"/></svg>
+                        </button>
+                        <button onclick="deleteMenu(${m.id})" class="text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 p-1.5 rounded-md transition" title="Hapus">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 6h18"/><path d="M19 6v14c0 1-1 2-2 2H7c-1 0-2-1-2-2V6"/><path d="M8 6V4c0-1 1-2 2-2h4c1 0 2 1 2 2v2"/></svg>
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // Handle File Input (Convert to Base64)
+        document.getElementById('menuImgFile').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) {
+                tempBase64Image = null;
+                document.getElementById('previewContainer').classList.add('hidden');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                tempBase64Image = event.target.result;
+                document.getElementById('imgPreview').src = tempBase64Image;
+                document.getElementById('previewContainer').classList.remove('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Handle Resto Logo Upload
+        document.getElementById('restoLogoInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const base64Logo = event.target.result;
+                const defaultLogo = document.getElementById('defaultLogo');
+                const customLogo = document.getElementById('customLogo');
+                
+                // Tampilkan gambar logo baru dan sembunyikan SVG bawaan
+                customLogo.src = base64Logo;
+                customLogo.classList.remove('hidden');
+                defaultLogo.classList.add('hidden');
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // Handler klik Bintang Rating
+        function setFormRating(val) {
+            currentFormRating = val;
+            for(let i=1; i<=5; i++) {
+                const star = document.getElementById('star'+i);
+                if(i <= val) {
+                    star.classList.add('text-yellow-500');
+                    star.classList.remove('text-gray-300');
+                } else {
+                    star.classList.remove('text-yellow-500');
+                    star.classList.add('text-gray-300');
+                }
+            }
+        }
+
+        // Form Submit (Add / Update)
+        document.getElementById('menuForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const idInput = document.getElementById('menuId').value;
+            const menuData = {
+                name: document.getElementById('menuName').value,
+                desc: document.getElementById('menuDesc').value,
+                price: parseFloat(document.getElementById('menuPrice').value),
+                rating: currentFormRating,
+                category: document.getElementById('menuCategory').value,
+                subcategory: document.getElementById('menuCategory').value === 'makanan' ? document.getElementById('menuSubcategory').value : '',
+                img: tempBase64Image // Uses the uploaded base64 string
+            };
+
+            if (idInput) {
+                // Update mode
+                const index = menus.findIndex(m => m.id === parseInt(idInput));
+                if (index !== -1) {
+                    // Keep old image if no new file is uploaded
+                    if (!tempBase64Image) {
+                        menuData.img = menus[index].img; 
+                    }
+                    menus[index] = { ...menus[index], ...menuData };
+                }
+            } else {
+                // Add mode
+                menus.unshift({ id: Date.now(), ...menuData });
+            }
+
+            // Sync cart items with updated menu details (optional robust handling)
+            cart.forEach(c => {
+                const updated = menus.find(m => m.id === c.menu.id);
+                if(updated) c.menu = updated;
+            });
+
+            cancelEdit(); // reset form
+            renderMenus();
+            renderCart();
+        });
+
+        function editMenu(id) {
+            const menu = menus.find(m => m.id === id);
+            if(!menu) return;
+
+            document.getElementById('menuId').value = menu.id;
+            document.getElementById('menuName').value = menu.name;
+            document.getElementById('menuCategory').value = menu.category || 'makanan';
+            updateFormSubcategories(menu.subcategory || 'lain-lain');
+            document.getElementById('menuDesc').value = menu.desc;
+            document.getElementById('menuPrice').value = menu.price;
+            
+            setFormRating(menu.rating || 5); // Tampilkan status bintang
+            
+            // Image handling for edit
+            tempBase64Image = null; // reset temp
+            document.getElementById('menuImgFile').value = '';
+            const previewCont = document.getElementById('previewContainer');
+            if(menu.img) {
+                document.getElementById('imgPreview').src = menu.img;
+                previewCont.classList.remove('hidden');
+            } else {
+                previewCont.classList.add('hidden');
+            }
+
+            // Update UI State for Editing
+            document.getElementById('formTitle').innerText = i18n[currentLang].editMenuTitle;
+            document.getElementById('btnSubmitMenu').innerText = i18n[currentLang].btnUpdate;
+            document.getElementById('btnCancelEdit').classList.remove('hidden');
+        }
+
+        function cancelEdit() {
+            document.getElementById('menuForm').reset();
+            document.getElementById('menuId').value = '';
+            updateFormSubcategories('lain-lain');
+            tempBase64Image = null;
+            document.getElementById('previewContainer').classList.add('hidden');
+            
+            setFormRating(5); // Reset form rating jadi bintang 5
+            
+            document.getElementById('formTitle').innerText = i18n[currentLang].addMenuTitle;
+            document.getElementById('btnSubmitMenu').innerText = i18n[currentLang].btnSubmit;
+            document.getElementById('btnCancelEdit').classList.add('hidden');
+        }
+
+        function deleteMenu(id) {
+            menus = menus.filter(m => m.id !== id);
+            cart = cart.filter(c => c.menu.id !== id); 
+            renderMenus();
+            renderCart();
+            if(document.getElementById('menuId').value == id) cancelEdit();
+        }
+
+        // --- Modals Base Logic ---
+        function openModal(id) {
+            document.getElementById(id).classList.add('active');
+        }
+        function closeModal(id) {
+            document.getElementById(id).classList.remove('active');
+            if (id === 'settingsModal') cancelEdit(); // reset edit state if settings closed
+        }
+        // Close modal on click outside content
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) { if(e.target === this) closeModal(this.id); });
+        });
+
+        // --- Logika Ubah Nama Resto ---
+        function updateRestoName(event) {
+            const newName = document.getElementById('restoNameInput').value;
+            if (newName.trim() !== '') {
+                // Update dict bahasa agar ter-render oleh fungsi translasi otomatis
+                i18n.id.restoName = newName;
+                i18n.en.restoName = newName;
+                translateUI(); 
+                
+                // Efek UX jika berhasil disimpan
+                const btn = event.currentTarget;
+                const originalText = btn.innerText;
+                btn.innerText = "✓";
+                btn.classList.add('bg-green-500');
+                btn.classList.remove('bg-primary');
+                setTimeout(() => {
+                    btn.innerText = originalText;
+                    btn.classList.remove('bg-green-500');
+                    btn.classList.add('bg-primary');
+                }, 1500);
+            }
+        }
+
+        // --- Theme & Language ---
+        const htmlEl = document.documentElement;
+        const themeToggle = document.getElementById('themeToggle');
+        
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            htmlEl.classList.add('dark');
+            themeToggle.checked = true;
+        }
+
+        themeToggle.addEventListener('change', (e) => {
+            if(e.target.checked) { htmlEl.classList.add('dark'); localStorage.theme = 'dark'; } 
+            else { htmlEl.classList.remove('dark'); localStorage.theme = 'light'; }
+        });
+
+        function translateUI() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const key = el.getAttribute('data-i18n');
+                if(i18n[currentLang][key]) {
+                    if (el.tagName === 'INPUT' && el.type === 'text') {
+                        el.placeholder = i18n[currentLang][key]; // For inputs if needed
+                    } else {
+                        el.innerText = i18n[currentLang][key];
+                    }
+                }
+            });
+            updateFormSubcategories(document.getElementById('menuSubcategory').value);
+            renderCategoryFilters();
+            renderManageList(); 
+            if(cart.length === 0) renderCart(); 
+        }
+
+        document.getElementById('langSelect').addEventListener('change', (e) => {
+            currentLang = e.target.value;
+            translateUI();
+            
+            // Adjust form button text based on edit mode
+            if(document.getElementById('menuId').value) {
+                document.getElementById('formTitle').innerText = i18n[currentLang].editMenuTitle;
+                document.getElementById('btnSubmitMenu').innerText = i18n[currentLang].btnUpdate;
+            }
+        });
+
+        document.getElementById('menuCategory').addEventListener('change', () => updateFormSubcategories());
+
+        // Initialize
+        window.onload = () => {
+            updateFormSubcategories('lain-lain');
+            renderMenus();
+            renderCart();
+            setFormRating(5); // Inisialisasi awal UI bintang
+        };
+
+    </script>
+</body>
+</html>
